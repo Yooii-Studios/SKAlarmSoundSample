@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">SKAlarmSound</string>
 
+    <!-- Alarm Preference -->
+    <string name="alarm_pref_sound_type">Sound</string>
+
     <!-- Alarm Sound -->
     <string name="alarm_sound_string_none">Mute</string>
     <string name="alarm_sound_string_vibrate">Vibrate</string>

@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSound;
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundManager;
+import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundType;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -54,7 +55,12 @@ public class MainActivity extends Activity {
     @OnClick(R.id.none)
     void noneButtonClicked() {
         Log.i(TAG, "noneButtonClicked");
-        String muteString = "";
-        String path = null;
+        currentAlarmSound = SKAlarmSound.newInstance(SKAlarmSoundType.MUTE, "", null);
+        refreshAlarmSoundTextViews();
+    }
+
+    void refreshAlarmSoundTextViews() {
+        soundTypeTextView.setText(currentAlarmSound.getAlarmSoundType().toString());
+        soundTitleTextView.setText(currentAlarmSound.getSoundTitle());
     }
 }
