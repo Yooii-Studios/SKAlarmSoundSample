@@ -5,17 +5,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.yooiistudios.stevenkim.alarmsound.SKAlarmSound;
+import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundManager;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import lombok.Getter;
 
 public class MainActivity extends Activity {
 
     private static final String TAG = "MainActivity";
 
-    @Getter @InjectView(R.id.alarmSoundTypeTextView) TextView soundTypeTextView;
-    @Getter @InjectView(R.id.alarmSoundTitleTextView) TextView soundTitleTextView;
+    @InjectView(R.id.alarmSoundTypeTextView) TextView soundTypeTextView;
+    @InjectView(R.id.alarmSoundTitleTextView) TextView soundTitleTextView;
+
+    SKAlarmSound currentAlarmSound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +27,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.inject(this);
+
+        currentAlarmSound = SKAlarmSoundManager.loadLatestAlarmSound(this);
     }
 
     @OnClick(R.id.alarmSoundDialogButton)
