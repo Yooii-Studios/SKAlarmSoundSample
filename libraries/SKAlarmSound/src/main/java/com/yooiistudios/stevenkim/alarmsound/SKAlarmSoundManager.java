@@ -53,4 +53,15 @@ public class SKAlarmSoundManager {
 
         return alarmSound;
     }
+
+    /**
+     * load the default alarm sound(system default ringtone) from device.
+     * @param context Context to access the Android
+     * @return default SKAlarmSound
+     */
+    public static SKAlarmSound loadDefaultAlarmSound(Context context) {
+        SKAlarmSound alarmSound = null;
+
+        return alarmSound;
+    }
 }
