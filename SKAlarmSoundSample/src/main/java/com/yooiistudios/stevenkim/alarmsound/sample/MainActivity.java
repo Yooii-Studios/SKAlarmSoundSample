@@ -69,6 +69,8 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
     void clearSoundButtonClicked() {
         Log.i(TAG, "clearSoundButtonClicked");
         currentAlarmSound = null;
+        SKAlarmSoundManager.clearLatestAlarmSound(this);
+        refreshAlarmSoundTextViews();
     }
 
     @OnClick(R.id.playStopButton)
@@ -77,8 +79,13 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
     }
 
     void refreshAlarmSoundTextViews() {
-        soundTypeTextView.setText(currentAlarmSound.getAlarmSoundType().toString());
-        soundTitleTextView.setText(currentAlarmSound.getSoundTitle());
+        if (currentAlarmSound != null) {
+            soundTypeTextView.setText(currentAlarmSound.getAlarmSoundType().toString());
+            soundTitleTextView.setText(currentAlarmSound.getSoundTitle());
+        } else {
+            soundTypeTextView.setText("Sound Type");
+            soundTitleTextView.setText("Sound Title");
+        }
     }
 
     /**
