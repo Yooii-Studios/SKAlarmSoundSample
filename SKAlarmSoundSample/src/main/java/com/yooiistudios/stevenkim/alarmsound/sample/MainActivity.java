@@ -5,16 +5,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.yooiistudios.stevenkim.alarmsound.OnAlarmSoundClickListener;
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSound;
+import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundDialog;
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundFactory;
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundManager;
-import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundType;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnAlarmSoundClickListener {
 
     private static final String TAG = "MainActivity";
 
@@ -31,11 +32,6 @@ public class MainActivity extends Activity {
         ButterKnife.inject(this);
 
         currentAlarmSound = SKAlarmSoundManager.loadLatestAlarmSound(this);
-    }
-
-    @OnClick(R.id.alarmSoundDialogButton)
-    void soundDialogButtonClicked() {
-        Log.i(TAG, "soundDialogButtonClicked");
     }
 
     @OnClick(R.id.mp3Button)
@@ -60,8 +56,29 @@ public class MainActivity extends Activity {
         refreshAlarmSoundTextViews();
     }
 
+    @OnClick(R.id.alarmSoundDialogButton)
+    void soundDialogButtonClicked() {
+        Log.i(TAG, "soundDialogButtonClicked");
+        SKAlarmSoundDialog.makeSoundAlertDialog(this, currentAlarmSound, this).show();
+    }
+
+    @OnClick(R.id.clearSoundButton)
+    void clearSoundButtonClicked() {
+        Log.i(TAG, "clearSoundButtonClicked");
+        currentAlarmSound = null;
+    }
+
     void refreshAlarmSoundTextViews() {
         soundTypeTextView.setText(currentAlarmSound.getAlarmSoundType().toString());
         soundTitleTextView.setText(currentAlarmSound.getSoundTitle());
+    }
+
+    /**
+     * SKAlarmSoundDialog Listner
+     */
+    @Override
+    public void onAlarmSoundSelected(SKAlarmSound alarmSound) {
+        currentAlarmSound = alarmSound;
+        refreshAlarmSoundTextViews();
     }
 }

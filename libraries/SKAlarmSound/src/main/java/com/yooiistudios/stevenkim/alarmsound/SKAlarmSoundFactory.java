@@ -6,7 +6,7 @@ import android.content.Context;
  * Created by StevenKim in SKAlarmSoundSample from Yooii Studios Co., LTD. on 2014. 1. 2.
  *
  * SKAlarmSoundFactory
- *  미리 정해진 세팅의 AlarmSound를 만든다
+ *  Class that makes preset Alarm Sounds
  */
 public class SKAlarmSoundFactory {
     private SKAlarmSoundFactory() { throw new AssertionError("You MUST not craete class!"); }
@@ -25,6 +25,11 @@ public class SKAlarmSoundFactory {
         return SKAlarmSound.newInstance(SKAlarmSoundType.RINGTONE, soundTitle, soundPath);
     }
 
+    /**
+     * make preset mute alarm sound
+     * @param context Context to access the Android
+     * @return mute alarm sound
+     */
     public static SKAlarmSound makeMuteAlarmSound(Context context) {
         return SKAlarmSound.newInstance(SKAlarmSoundType.MUTE, "", null);
     }

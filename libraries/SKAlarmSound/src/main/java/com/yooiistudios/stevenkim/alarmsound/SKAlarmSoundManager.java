@@ -6,7 +6,7 @@ import android.content.Context;
  * Created by StevenKim in SKAlarmSoundSample from Yooii Studios Co., LTD. on 2014. 1. 2.
  *
  * SKAlarmSoundManager
- *   사운드 로직에 관련된 작업을 진행
+ *  Handle the logic about sound
  */
 public class SKAlarmSoundManager {
 
