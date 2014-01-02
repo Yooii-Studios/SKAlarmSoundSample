@@ -48,5 +48,7 @@ public class MainActivity extends Activity {
     @OnClick(R.id.none)
     void noneButtonClicked() {
         Log.i(TAG, "noneButtonClicked");
+        String muteString = "";
+        String path = null;
     }
 }
