@@ -33,6 +33,7 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
         ButterKnife.inject(this);
 
         currentAlarmSound = SKAlarmSoundManager.loadLatestAlarmSound(this);
+        refreshAlarmSoundTextViews();
     }
 
     @OnClick(R.id.mp3Button)

@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+import android.widget.ListView;
 
 /**
  * Created by StevenKim in SKAlarmSoundSample from Yooii Studios Co., LTD. on 2014. 1. 2.
@@ -92,7 +94,7 @@ public class SKAlarmSoundDialog {
 
             // search the previously selected ringtone if the alarm sound is validate
             if (alarmSound.getAlarmSoundType() == SKAlarmSoundType.RINGTONE
-                    && SKAlarmSoundManager.validateAlarmSound(alarmSound, context)) {
+                    && SKAlarmSoundManager.validateAlarmSound(alarmSound.getSoundPath(), context)) {
 
                 for (ringtones.moveToFirst(); !ringtones.isAfterLast(); ringtones.moveToNext()) {
                     selected++;
@@ -120,8 +122,6 @@ public class SKAlarmSoundDialog {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // play ringtone when selected
-//                selectedIndex = which;
-                Log.i(TAG, "selectedIndex: " + which);
                 ringtones.moveToPosition(which);
                 String path = ringtones.getString(RingtoneManager.URI_COLUMN_INDEX)
                         + "/"
@@ -139,6 +139,40 @@ public class SKAlarmSoundDialog {
         }).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                ListView ringtonListView = ((AlertDialog)dialog).getListView();
+                int selectedIndex = ringtonListView.getCheckedItemPosition();
+                Log.i(TAG, "selectedIndex: " + ringtonListView.getCheckedItemPosition());
+
+                // if which is -1, it's the same as canceled
+                if (selectedIndex != -1) {
+                    // 벨소리 path, 벨소리 이름 적용하기
+                    ringtones.moveToPosition(selectedIndex);
+                    String soundSourcePath = ringtones.getString(RingtoneManager.URI_COLUMN_INDEX)
+                            + "/" + ringtones.getInt(RingtoneManager.ID_COLUMN_INDEX);
+
+                    Uri ringtoneSource;
+                    Ringtone ringtone;
+                    SKAlarmSound newAlarmSound;
+
+                    // 1. set and save to latestAlarmSound if ringtone source is valid
+                    if (SKAlarmSoundManager.validateAlarmSound(soundSourcePath, context)) {
+                        ringtoneSource = Uri.parse(soundSourcePath);
+                        ringtone = RingtoneManager.getRingtone(context, ringtoneSource);
+                        newAlarmSound = SKAlarmSound.newInstance(SKAlarmSoundType.RINGTONE, ringtone.getTitle(context), soundSourcePath);
+
+                        // Save
+                        SKAlarmSoundManager.saveLatestAlarmSound(newAlarmSound, context);
+                    }
+                    // 2. If not, make default alarm sound
+                    else {
+                        newAlarmSound = SKAlarmSoundFactory.makeDefaultAlarmSound(context);
+                    }
+
+                    // callback
+                    alarmSoundClickListener.onAlarmSoundSelected(newAlarmSound);
+                }
+
                 // stop ringtone
                 mediaPlayer.reset();
                 mediaPlayer.release();
