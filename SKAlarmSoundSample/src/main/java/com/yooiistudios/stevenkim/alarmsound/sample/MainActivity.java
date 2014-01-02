@@ -68,6 +68,11 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
         currentAlarmSound = null;
     }
 
+    @OnClick(R.id.playStopButton)
+    void playAndStopSound() {
+        Log.i(TAG, "playAndStopSound");
+    }
+
     void refreshAlarmSoundTextViews() {
         soundTypeTextView.setText(currentAlarmSound.getAlarmSoundType().toString());
         soundTitleTextView.setText(currentAlarmSound.getSoundTitle());
