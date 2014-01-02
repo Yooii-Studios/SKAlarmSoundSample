@@ -10,18 +10,17 @@ public class SKAlarmSound {
 
     private SKAlarmSoundType alarmSoundType;
     private String soundTitle;
-    private String soundPathString;
+    private String soundPath;
 
     private SKAlarmSound() {}
-    private SKAlarmSound(SKAlarmSoundType alarmSoundType, String soundTitle, String soundPathString) {
+    private SKAlarmSound(SKAlarmSoundType alarmSoundType, String soundTitle, String soundPath) {
         setAlarmSoundType(alarmSoundType);
         setSoundTitle(soundTitle);
-        setSoundPathString(soundPathString);
+        setSoundPath(soundPath);
     }
 
     // Factory
-    public static SKAlarmSound newInstance(SKAlarmSoundType alarmSoundType,
-                                           String soundTitle, String soundPathString) {
+    public static SKAlarmSound newInstance(SKAlarmSoundType alarmSoundType, String soundTitle, String soundPathString) {
         return new SKAlarmSound(alarmSoundType, soundTitle, soundPathString);
     }
 
@@ -44,11 +43,11 @@ public class SKAlarmSound {
         this.soundTitle = soundTitle;
     }
 
-    public String getSoundPathString() {
-        return soundPathString;
+    public String getSoundPath() {
+        return soundPath;
     }
 
-    public void setSoundPathString(String soundPathString) {
-        this.soundPathString = soundPathString;
+    public void setSoundPath(String soundPath) {
+        this.soundPath = soundPath;
     }
 }
