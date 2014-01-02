@@ -6,7 +6,7 @@ import android.content.Context;
  * Created by StevenKim in SKAlarmSoundSample from Yooii Studios Co., LTD. on 2014. 1. 2.
  *
  * SKAlarmSoundManager
- *   사운드 로직에 관련된 작업을 진행
+ *  Handle the logic about sound
  */
 public class SKAlarmSoundManager {
 
@@ -49,17 +49,6 @@ public class SKAlarmSoundManager {
      * @return SKAlarmSound which is selected recently.
      */
     public static SKAlarmSound loadLatestAlarmSound(Context context) {
-        SKAlarmSound alarmSound = null;
-
-        return alarmSound;
-    }
-
-    /**
-     * load the default alarm sound(system default ringtone) from device.
-     * @param context Context to access the Android
-     * @return default SKAlarmSound
-     */
-    public static SKAlarmSound loadDefaultAlarmSound(Context context) {
         SKAlarmSound alarmSound = null;
 
         return alarmSound;
