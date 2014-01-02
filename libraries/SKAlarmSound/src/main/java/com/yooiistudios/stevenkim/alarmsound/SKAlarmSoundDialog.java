@@ -49,7 +49,7 @@ public class SKAlarmSoundDialog {
                         break;
                     case 1:
                         Log.i(TAG, "sound_ringtones");
-                        AlertDialog ringtoneDialog = makeRingtoneDialog(context, alarmSound);
+                        AlertDialog ringtoneDialog = makeRingtoneDialog(context, alarmSound, alarmSoundClickListener);
                         ringtoneDialog.show();
                         break;
                     case 2:
@@ -77,7 +77,9 @@ public class SKAlarmSoundDialog {
         return alertDialog;
     }
 
-    public static AlertDialog makeRingtoneDialog(final Context context, final SKAlarmSound alarmSound) {
+    public static AlertDialog makeRingtoneDialog(final Context context, final SKAlarmSound alarmSound,
+                                                 final OnAlarmSoundClickListener alarmSoundClickListener) {
+
         RingtoneManager ringtoneManager = new RingtoneManager(context);
         final Cursor ringtones = ringtoneManager.getCursor();
         final MediaPlayer mediaPlayer = new MediaPlayer();
@@ -85,17 +87,21 @@ public class SKAlarmSoundDialog {
         // default is not selected
         int selected = -1;
 
-        Log.i(TAG, "currentSelectedRingtone: " +  alarmSound.getSoundPath());
+        if (alarmSound != null && alarmSound.getSoundPath() != null) {
+            Log.i(TAG, "selected ringtone: " +  alarmSound.getSoundPath());
 
-        // search the previously selected ringtone if the alarm sound is validate
-        if (alarmSound.getAlarmSoundType() == SKAlarmSoundType.RINGTONE
-                && SKAlarmSoundManager.validateAlarmSound(alarmSound, context)) {
+            // search the previously selected ringtone if the alarm sound is validate
+            if (alarmSound.getAlarmSoundType() == SKAlarmSoundType.RINGTONE
+                    && SKAlarmSoundManager.validateAlarmSound(alarmSound, context)) {
 
-            for (ringtones.moveToFirst(); !ringtones.isAfterLast(); ringtones.moveToNext()) {
-                selected++;
-                String path = ringtones.getString(RingtoneManager.URI_COLUMN_INDEX) + "/" + ringtones.getInt(RingtoneManager.ID_COLUMN_INDEX);
-                if (path.equals(alarmSound.getSoundPath())) {
-                    break;
+                for (ringtones.moveToFirst(); !ringtones.isAfterLast(); ringtones.moveToNext()) {
+                    selected++;
+                    String path = ringtones.getString(RingtoneManager.URI_COLUMN_INDEX) + "/"
+                            + ringtones.getInt(RingtoneManager.ID_COLUMN_INDEX);
+
+                    if (path.equals(alarmSound.getSoundPath())) {
+                        break;
+                    }
                 }
             }
         }
@@ -113,9 +119,9 @@ public class SKAlarmSoundDialog {
                 ringtones.getColumnName(RingtoneManager.TITLE_COLUMN_INDEX), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // 클릭하면 음악을 들어볼 수 있게
+                // play ringtone when selected
 //                selectedIndex = which;
-//                Log.i(TAG, "selectedIndex: " + selectedIndex);
+                Log.i(TAG, "selectedIndex: " + which);
                 ringtones.moveToPosition(which);
                 String path = ringtones.getString(RingtoneManager.URI_COLUMN_INDEX)
                         + "/"
@@ -130,14 +136,39 @@ public class SKAlarmSoundDialog {
                     e.printStackTrace();
                 }
             }
+        }).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // stop ringtone
+                mediaPlayer.reset();
+                mediaPlayer.release();
+                ringtones.close();
+            }
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // stop ringtone
+                mediaPlayer.reset();
+                mediaPlayer.release();
+                ringtones.close();
+                alarmSoundClickListener.onAlarmSoundSelectCanceled();
+            }
         }).setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 Log.i(TAG, "onCancel");
+                // stop ringtone
+                mediaPlayer.reset();
+                mediaPlayer.release();
+                ringtones.close();
+                alarmSoundClickListener.onAlarmSoundSelectCanceled();
             }
         }).create();
 
-        return null;
+        alertDialog.setTitle(R.string.alarm_sound_string_ringtones);
+        alertDialog.setCanceledOnTouchOutside(false);
+
+        return alertDialog;
     }
 
     public static AlertDialog makeMusicDialog(final Context context, final SKAlarmSound alarmSound) {

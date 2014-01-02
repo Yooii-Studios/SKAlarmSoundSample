@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yooiistudios.stevenkim.alarmsound.OnAlarmSoundClickListener;
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSound;
@@ -42,6 +43,7 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
     @OnClick(R.id.ringtonButton)
     void ringtonesButtonClicked() {
         Log.i(TAG, "ringtonesButtonClicked");
+        SKAlarmSoundDialog.makeRingtoneDialog(this, currentAlarmSound, this).show();
     }
 
     @OnClick(R.id.mnButton)
@@ -85,5 +87,10 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
     public void onAlarmSoundSelected(SKAlarmSound alarmSound) {
         currentAlarmSound = alarmSound;
         refreshAlarmSoundTextViews();
+    }
+
+    @Override
+    public void onAlarmSoundSelectCanceled() {
+        Toast.makeText(this, "Alarm selecte canceled", Toast.LENGTH_SHORT).show();
     }
 }

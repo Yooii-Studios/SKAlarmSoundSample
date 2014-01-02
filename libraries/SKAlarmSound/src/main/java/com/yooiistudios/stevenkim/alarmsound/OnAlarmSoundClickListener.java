@@ -8,4 +8,5 @@ package com.yooiistudios.stevenkim.alarmsound;
  */
 public interface OnAlarmSoundClickListener {
     abstract public void onAlarmSoundSelected(SKAlarmSound alarmSound);
+    abstract public void onAlarmSoundSelectCanceled();
 }
