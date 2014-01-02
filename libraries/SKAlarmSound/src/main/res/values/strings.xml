@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">SKAlarmSound</string>
 
+    <!-- General -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
     <!-- Alarm Preference -->
     <string name="alarm_pref_sound_type">Sound</string>
 
