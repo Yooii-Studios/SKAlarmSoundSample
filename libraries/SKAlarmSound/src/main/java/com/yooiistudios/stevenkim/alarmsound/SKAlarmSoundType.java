@@ -6,4 +6,12 @@ package com.yooiistudios.stevenkim.alarmsound;
  * SKAlarmSoundType
  */
 public enum SKAlarmSoundType {
+    MUTE(0), RINGTONE(1), MUSIC(2), MORNING_KIT_MUSIC(3);
+
+    private final int index;
+    public int getIndex() { return index; }
+
+    SKAlarmSoundType(int index) {
+        this.index = index;
+    }
 }

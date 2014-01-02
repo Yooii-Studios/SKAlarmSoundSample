@@ -7,4 +7,31 @@ package com.yooiistudios.stevenkim.alarmsound;
  *   Model
  */
 public class SKAlarmSound {
+    public SKAlarmSoundType getAlarmSoundType() {
+        return alarmSoundType;
+    }
+
+    public void setAlarmSoundType(SKAlarmSoundType alarmSoundType) {
+        this.alarmSoundType = alarmSoundType;
+    }
+
+    public String getSoundTitle() {
+        return soundTitle;
+    }
+
+    public void setSoundTitle(String soundTitle) {
+        this.soundTitle = soundTitle;
+    }
+
+    public String getSoundPathString() {
+        return soundPathString;
+    }
+
+    public void setSoundPathString(String soundPathString) {
+        this.soundPathString = soundPathString;
+    }
+
+    private SKAlarmSoundType alarmSoundType;
+    private String soundTitle;
+    private String soundPathString;
 }
