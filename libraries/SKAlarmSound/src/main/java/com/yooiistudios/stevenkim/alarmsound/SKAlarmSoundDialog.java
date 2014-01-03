@@ -3,9 +3,7 @@ package com.yooiistudios.stevenkim.alarmsound;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -27,6 +25,13 @@ public class SKAlarmSoundDialog {
 
     private SKAlarmSoundDialog() { throw new AssertionError("You MUST not create this class!"); }
 
+    /**
+     * make alarm sound selection AlertDialog
+     * @param context Context to be used to access Android
+     * @param alarmSound SKAlarmSound instance which contains previous setting
+     * @param alarmSoundClickListener callback listener(usually Activity)
+     * @return AlertDialog
+     */
     public static AlertDialog makeSoundAlertDialog(final Context context, final SKAlarmSound alarmSound,
                                                    final OnAlarmSoundClickListener alarmSoundClickListener) {
         // SingleChoiceItems
@@ -82,12 +87,18 @@ public class SKAlarmSoundDialog {
         return alertDialog;
     }
 
+    /**
+     * Ringtone-only AlertDialog
+     * @param context Context to be used to access Android
+     * @param alarmSound SKAlarmSound instance which contains previous setting
+     * @param alarmSoundClickListener callback listener(usually Activity)
+     * @return AlertDialog
+     */
     public static AlertDialog makeRingtoneDialog(final Context context, final SKAlarmSound alarmSound,
                                                  final OnAlarmSoundClickListener alarmSoundClickListener) {
 
         RingtoneManager ringtoneManager = new RingtoneManager(context);
         final Cursor ringtones = ringtoneManager.getCursor();
-        final MediaPlayer mediaPlayer = new MediaPlayer();
 
         // default is not selected
         int selectedIndex = -1;
@@ -126,12 +137,16 @@ public class SKAlarmSoundDialog {
                 String path = ringtones.getString(RingtoneManager.URI_COLUMN_INDEX)
                         + "/"
                         + ringtones.getInt(RingtoneManager.ID_COLUMN_INDEX);
-                mediaPlayer.reset();
+
+                Uri uri = Uri.parse(path);
+
                 try{
-                    Uri uri = Uri.parse(path);
-                    mediaPlayer.setDataSource(context, uri);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
+                    SKAlarmSoundPlayer.play(uri, context);
+//                    mediaPlayer.reset();
+//
+//                    mediaPlayer.setDataSource(context, uri);
+//                    mediaPlayer.prepare();
+//                    mediaPlayer.start();
                 }catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -175,16 +190,18 @@ public class SKAlarmSoundDialog {
                 }
 
                 // stop ringtone
-                mediaPlayer.reset();
-                mediaPlayer.release();
+                SKAlarmSoundPlayer.stop();
+//                mediaPlayer.reset();
+//                mediaPlayer.release();
                 ringtones.close();
             }
         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // stop ringtone
-                mediaPlayer.reset();
-                mediaPlayer.release();
+                SKAlarmSoundPlayer.stop();
+//                mediaPlayer.reset();
+//                mediaPlayer.release();
                 ringtones.close();
                 alarmSoundClickListener.onAlarmSoundSelectCanceled();
             }
@@ -193,8 +210,9 @@ public class SKAlarmSoundDialog {
             public void onCancel(DialogInterface dialog) {
                 Log.i(TAG, "onCancel");
                 // stop ringtone
-                mediaPlayer.reset();
-                mediaPlayer.release();
+                SKAlarmSoundPlayer.stop();
+//                mediaPlayer.reset();
+//                mediaPlayer.release();
                 ringtones.close();
                 alarmSoundClickListener.onAlarmSoundSelectCanceled();
             }
@@ -205,6 +223,13 @@ public class SKAlarmSoundDialog {
         return alertDialog;
     }
 
+    /**
+     * Music-only AlertDialog
+     * @param context Context to be used to access Android
+     * @param alarmSound SKAlarmSound instance which contains previous setting
+     * @param alarmSoundClickListener callback listener(usually Activity)
+     * @return AlertDialog
+     */
     public static AlertDialog makeMusicDialog(final Context context, final SKAlarmSound alarmSound,
                                               final OnAlarmSoundClickListener alarmSoundClickListener) {
         String[] cursorColumns = new String[] {
@@ -213,12 +238,10 @@ public class SKAlarmSoundDialog {
         final Cursor musicCursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, cursorColumns, null, null, null);
 
         if (musicCursor != null) {
-            final MediaPlayer mediaPlayer = new MediaPlayer();
-
             int selectedIndex = -1;
 
             // search for the previously selected music index
-            if (alarmSound.getAlarmSoundType() == SKAlarmSoundType.MUSIC
+            if (alarmSound != null && alarmSound.getAlarmSoundType() == SKAlarmSoundType.MUSIC
                     && SKAlarmSoundManager.validateAlarmSound(alarmSound.getSoundPath(), context)) {
                 for (musicCursor.moveToFirst(); !musicCursor.isAfterLast(); musicCursor.moveToNext()) {
                     selectedIndex++;
@@ -250,12 +273,9 @@ public class SKAlarmSoundDialog {
                     String soundPath = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/"
                             + musicCursor.getInt(0);
 
-                    mediaPlayer.reset();
+                    Uri uri = Uri.parse(soundPath);
                     try {
-                        Uri uri = Uri.parse(soundPath);
-                        mediaPlayer.setDataSource(context, uri);
-                        mediaPlayer.prepare();
-                        mediaPlayer.start();
+                        SKAlarmSoundPlayer.play(uri, context);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -284,23 +304,20 @@ public class SKAlarmSoundDialog {
                         alarmSoundClickListener.onAlarmSoundSelected(newAlarmSound);
                     }
                     musicCursor.close();
-                    mediaPlayer.reset();
-                    mediaPlayer.release();
+                    SKAlarmSoundPlayer.stop();
                 }
             }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     alarmSoundClickListener.onAlarmSoundSelectCanceled();
-                    mediaPlayer.reset();
-                    mediaPlayer.release();
+                    SKAlarmSoundPlayer.stop();
                     musicCursor.close();
                 }
             }).setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
                     alarmSoundClickListener.onAlarmSoundSelectCanceled();
-                    mediaPlayer.reset();
-                    mediaPlayer.release();
+                    SKAlarmSoundPlayer.stop();
                     musicCursor.close();
                 }
             }).create();
@@ -315,14 +332,18 @@ public class SKAlarmSoundDialog {
         }
     }
 
+    /**
+     * AppMusic-only AlertDialog
+     * @param context Context to be used to access Android
+     * @param alarmSound SKAlarmSound instance which contains previous setting
+     * @param alarmSoundClickListener callback listener(usually Activity)
+     * @return AlertDialog
+     */
     public static AlertDialog makeAppMusicDialog(final Context context, final SKAlarmSound alarmSound,
                                                  final OnAlarmSoundClickListener alarmSoundClickListener) {
         final String[] appMusics = new String[] {
                 context.getString(R.string.alarm_sound_string_app_music_dream)
         };
-
-        final MediaPlayer mediaPlayer = new MediaPlayer();
-        mediaPlayer.setLooping(true);
 
         int selectedMusicIndex = -1;
         int i;
@@ -349,24 +370,12 @@ public class SKAlarmSoundDialog {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // play music when clicked
-                mediaPlayer.reset();
-
                 int appSoundRawInt = MNAlarmAppMusicManager.getRawIntFromIndex(which);
                 if (appSoundRawInt != -1) {
-                    AssetFileDescriptor afd = context.getResources().openRawResourceFd(appSoundRawInt);
-                    if (afd != null) {
-                        try {
-                            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                            afd.close();
-                            mediaPlayer.prepare();
-                            mediaPlayer.start();
-                        } catch (IllegalArgumentException e) {
-                            e.printStackTrace();
-                        } catch (IllegalStateException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        SKAlarmSoundPlayer.playAppMusic(appSoundRawInt, context);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -379,27 +388,29 @@ public class SKAlarmSoundDialog {
                 // if which is -1, it's the same as canceled
                 if (selectedIndex != -1) {
 
-                    SKAlarmSound newAlarmSound = SKAlarmSound.newInstance(SKAlarmSoundType.APP_MUSIC, appMusics[selectedIndex], null);
+                    int appSoundRawInt = MNAlarmAppMusicManager.getRawIntFromIndex(selectedIndex);
+                    String soundRawString = null;
+                    if (appSoundRawInt != -1) {
+                        soundRawString = String.valueOf(appSoundRawInt);
+                    }
+                    SKAlarmSound newAlarmSound = SKAlarmSound.newInstance(SKAlarmSoundType.APP_MUSIC, appMusics[selectedIndex], soundRawString);
                     alarmSoundClickListener.onAlarmSoundSelected(newAlarmSound);
 
                     SKAlarmSoundManager.saveLatestAlarmSound(newAlarmSound, context);
                 }
-                mediaPlayer.reset();
-                mediaPlayer.release();
+                SKAlarmSoundPlayer.stop();
             }
         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 alarmSoundClickListener.onAlarmSoundSelectCanceled();
-                mediaPlayer.reset();
-                mediaPlayer.release();
+                SKAlarmSoundPlayer.stop();
             }
         }).setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 alarmSoundClickListener.onAlarmSoundSelectCanceled();
-                mediaPlayer.reset();
-                mediaPlayer.release();
+                SKAlarmSoundPlayer.stop();
             }
         }).create();
 
