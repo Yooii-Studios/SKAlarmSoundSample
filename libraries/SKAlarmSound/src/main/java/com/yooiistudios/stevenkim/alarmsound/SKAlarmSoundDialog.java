@@ -207,7 +207,6 @@ public class SKAlarmSoundDialog {
 
     public static AlertDialog makeMusicDialog(final Context context, final SKAlarmSound alarmSound,
                                               final OnAlarmSoundClickListener alarmSoundClickListener) {
-
         String[] cursorColumns = new String[] {
                 "audio._id AS _id",  // index must match IDCOLIDX below
                 MediaStore.Audio.Media.TITLE };
@@ -267,24 +266,24 @@ public class SKAlarmSoundDialog {
                     ListView mp3ListView = ((AlertDialog)dialog).getListView();
                     int selectedIndex = mp3ListView.getCheckedItemPosition();
 
-                    // play music when clicked
-                    musicCursor.moveToPosition(selectedIndex);
-                    String soundPath = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/"
-                            + musicCursor.getInt(0);
+                    if (selectedIndex != -1) {// play music when clicked
+                        musicCursor.moveToPosition(selectedIndex);
+                        String soundPath = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/"
+                                + musicCursor.getInt(0);
 
-                    SKAlarmSound newAlarmSound;
-                    // 1. set and save the alarmSound if valid
-                    if (SKAlarmSoundManager.validateAlarmSound(soundPath, context)) {
-                        String title = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                        newAlarmSound = SKAlarmSound.newInstance(SKAlarmSoundType.MUSIC, title, soundPath);
-                    }
-                    // 2. if not, set the default alarmSound
-                    else {
-                        newAlarmSound = SKAlarmSoundFactory.makeDefaultAlarmSound(context);
+                        SKAlarmSound newAlarmSound;
+                        // 1. set and save the alarmSound if valid
+                        if (SKAlarmSoundManager.validateAlarmSound(soundPath, context)) {
+                            String title = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                            newAlarmSound = SKAlarmSound.newInstance(SKAlarmSoundType.MUSIC, title, soundPath);
+                        }
+                        // 2. if not, set the default alarmSound
+                        else {
+                            newAlarmSound = SKAlarmSoundFactory.makeDefaultAlarmSound(context);
+                        }
+                        alarmSoundClickListener.onAlarmSoundSelected(newAlarmSound);
                     }
                     musicCursor.close();
-
-                    alarmSoundClickListener.onAlarmSoundSelected(newAlarmSound);
                     mediaPlayer.reset();
                     mediaPlayer.release();
                 }
@@ -329,7 +328,7 @@ public class SKAlarmSoundDialog {
         int i;
 
         // search the index if I selected music in this alarmSound
-        if (alarmSound.getAlarmSoundType() == SKAlarmSoundType.APP_MUSIC) {
+        if (alarmSound != null && alarmSound.getAlarmSoundType() == SKAlarmSoundType.APP_MUSIC) {
             for (i = 0; selectedMusicIndex < appMusics.length; i++) {
                 if (alarmSound.getSoundTitle().equals(appMusics[i])) {
                     selectedMusicIndex = i;
@@ -374,7 +373,7 @@ public class SKAlarmSoundDialog {
         }).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ListView appMusicListView = ((AlertDialog)dialog).getListView();
+                ListView appMusicListView = ((AlertDialog) dialog).getListView();
                 int selectedIndex = appMusicListView.getCheckedItemPosition();
 
                 // if which is -1, it's the same as canceled
