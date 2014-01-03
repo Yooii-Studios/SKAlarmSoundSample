@@ -7,7 +7,7 @@ package com.yooiistudios.stevenkim.alarmsound;
  */
 public enum SKAlarmSoundType {
     MUTE(0, "MUTE"), RINGTONE(1, "RINGTONE"),
-    MUSIC(2, "MUSIC"), MORNING_KIT_MUSIC(3, "MORNING_KIT_MUSIC");
+    MUSIC(2, "MUSIC"), APP_MUSIC(3, "APP_MUSIC");
 
     private final int index;
     private final String typeName;
@@ -28,7 +28,7 @@ public enum SKAlarmSoundType {
             case 2:
                 return MUSIC;
             case 3:
-                return MORNING_KIT_MUSIC;
+                return APP_MUSIC;
         }
         return null;
     }

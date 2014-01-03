@@ -3,6 +3,7 @@ package com.yooiistudios.stevenkim.alarmsound;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
@@ -12,6 +13,8 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.ListView;
 
+import java.io.IOException;
+
 /**
  * Created by StevenKim in SKAlarmSoundSample from Yooii Studios Co., LTD. on 2014. 1. 2.
  *
@@ -20,6 +23,7 @@ import android.widget.ListView;
  */
 public class SKAlarmSoundDialog {
     private static final String TAG = "SKAlarmSoundDialog";
+
     private SKAlarmSoundDialog() { throw new AssertionError("You MUST not create this class!"); }
 
     public static AlertDialog makeSoundAlertDialog(final Context context, final SKAlarmSound alarmSound,
@@ -53,11 +57,11 @@ public class SKAlarmSoundDialog {
                         ringtoneDialog.show();
                         break;
                     case 2:
-                        AlertDialog musicDialog = makeMusicDialog(context, alarmSound);
+                        AlertDialog musicDialog = makeMusicDialog(context, alarmSound, alarmSoundClickListener);
                         musicDialog.show();
                         break;
                     case 3:
-                        AlertDialog appMusicDialog = makeAppMusicDialog(context, alarmSound);
+                        AlertDialog appMusicDialog = makeAppMusicDialog(context, alarmSound, alarmSoundClickListener);
                         appMusicDialog.show();
                         break;
                 }
@@ -113,8 +117,7 @@ public class SKAlarmSoundDialog {
         }
 
         // Build AlertDialog
-        AlertDialog alertDialog = builder.setSingleChoiceItems(ringtones, selected,
-                ringtones.getColumnName(RingtoneManager.TITLE_COLUMN_INDEX), new DialogInterface.OnClickListener() {
+        AlertDialog alertDialog = builder.setSingleChoiceItems(ringtones, selected, ringtones.getColumnName(RingtoneManager.TITLE_COLUMN_INDEX), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // play ringtone when selected
@@ -138,11 +141,9 @@ public class SKAlarmSoundDialog {
 
                 ListView ringtonListView = ((AlertDialog)dialog).getListView();
                 int selectedIndex = ringtonListView.getCheckedItemPosition();
-                Log.i(TAG, "selectedIndex: " + ringtonListView.getCheckedItemPosition());
 
                 // if which is -1, it's the same as canceled
                 if (selectedIndex != -1) {
-                    // 벨소리 path, 벨소리 이름 적용하기
                     ringtones.moveToPosition(selectedIndex);
                     String soundSourcePath = ringtones.getString(RingtoneManager.URI_COLUMN_INDEX)
                             + "/" + ringtones.getInt(RingtoneManager.ID_COLUMN_INDEX);
@@ -155,7 +156,10 @@ public class SKAlarmSoundDialog {
                     if (SKAlarmSoundManager.validateAlarmSound(soundSourcePath, context)) {
                         ringtoneSource = Uri.parse(soundSourcePath);
                         ringtone = RingtoneManager.getRingtone(context, ringtoneSource);
-                        newAlarmSound = SKAlarmSound.newInstance(SKAlarmSoundType.RINGTONE, ringtone.getTitle(context), soundSourcePath);
+
+                        // set
+                        newAlarmSound = SKAlarmSound.newInstance(SKAlarmSoundType.RINGTONE,
+                                ringtone.getTitle(context), soundSourcePath);
 
                         // Save
                         SKAlarmSoundManager.saveLatestAlarmSound(newAlarmSound, context);
@@ -197,15 +201,164 @@ public class SKAlarmSoundDialog {
 
         alertDialog.setTitle(R.string.alarm_sound_string_ringtones);
         alertDialog.setCanceledOnTouchOutside(false);
-
         return alertDialog;
     }
 
-    public static AlertDialog makeMusicDialog(final Context context, final SKAlarmSound alarmSound) {
-        return null;
+    public static AlertDialog makeMusicDialog(final Context context, final SKAlarmSound alarmSound,
+                                              final OnAlarmSoundClickListener alarmSoundClickListener) {
+        final String[] appMusics = new String[] {
+                context.getString(R.string.alarm_sound_string_music)
+        };
+
+        final MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer.setLooping(true);
+
+        int selectedMusicIndex = -1;
+        int i;
+
+        // search the index if I selected music in this alarmSound
+        if (alarmSound.getAlarmSoundType() == SKAlarmSoundType.MUSIC) {
+            for (i = 0; selectedMusicIndex < appMusics.length; i++) {
+                if (alarmSound.getSoundTitle().equals(appMusics[i])) {
+                    selectedMusicIndex = i;
+                    break;
+                }
+            }
+        }
+
+        // Builder for each version
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            builder = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_DARK);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        AlertDialog alertDialog = builder.setSingleChoiceItems(appMusics, selectedMusicIndex, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SKAlarmSound newAlarmSound = null;
+                alarmSoundClickListener.onAlarmSoundSelected(newAlarmSound);
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alarmSoundClickListener.onAlarmSoundSelectCanceled();
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                alarmSoundClickListener.onAlarmSoundSelectCanceled();
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        }).create();
+
+        alertDialog.setTitle(R.string.alarm_sound_string_music);
+        alertDialog.setCanceledOnTouchOutside(false);
+        return alertDialog;
     }
 
-    public static AlertDialog makeAppMusicDialog(final Context context, final SKAlarmSound alarmSound) {
-        return null;
+    public static AlertDialog makeAppMusicDialog(final Context context, final SKAlarmSound alarmSound,
+                                                 final OnAlarmSoundClickListener alarmSoundClickListener) {
+
+        final String[] appMusics = new String[] {
+                context.getString(R.string.alarm_sound_string_app_music_dream)
+        };
+
+        final MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer.setLooping(true);
+
+        int selectedMusicIndex = -1;
+        int i;
+
+        // search the index if I selected music in this alarmSound
+        if (alarmSound.getAlarmSoundType() == SKAlarmSoundType.APP_MUSIC) {
+            for (i = 0; selectedMusicIndex < appMusics.length; i++) {
+                if (alarmSound.getSoundTitle().equals(appMusics[i])) {
+                    selectedMusicIndex = i;
+                    break;
+                }
+            }
+        }
+
+        // Builder for each version
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            builder = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_DARK);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        AlertDialog alertDialog = builder.setSingleChoiceItems(appMusics, selectedMusicIndex, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // play music when clicked
+                mediaPlayer.reset();
+
+                int appSoundRawInt = MNAlarmAppMusicManager.getRawIntFromIndex(which);
+                if (appSoundRawInt != -1) {
+                    AssetFileDescriptor afd = context.getResources().openRawResourceFd(appSoundRawInt);
+                    if (afd != null) {
+                        try {
+                            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                            afd.close();
+                            mediaPlayer.prepare();
+                            mediaPlayer.start();
+                        } catch (IllegalArgumentException e) {
+                            e.printStackTrace();
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ListView ringtonListView = ((AlertDialog)dialog).getListView();
+                int selectedIndex = ringtonListView.getCheckedItemPosition();
+
+                // if which is -1, it's the same as canceled
+                if (selectedIndex != -1) {
+
+                    SKAlarmSound newAlarmSound = SKAlarmSound.newInstance(SKAlarmSoundType.APP_MUSIC, appMusics[selectedIndex], null);
+                    alarmSoundClickListener.onAlarmSoundSelected(newAlarmSound);
+
+                    SKAlarmSoundManager.saveLatestAlarmSound(newAlarmSound, context);
+                }
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alarmSoundClickListener.onAlarmSoundSelectCanceled();
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                alarmSoundClickListener.onAlarmSoundSelectCanceled();
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        }).create();
+
+        alertDialog.setTitle(R.string.alarm_sound_string_app_music);
+        alertDialog.setCanceledOnTouchOutside(false);
+        return alertDialog;
     }
 }

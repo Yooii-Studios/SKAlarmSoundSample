@@ -50,7 +50,7 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
 
     @OnClick(R.id.mnButton)
     void mnButtonClicked() {
-        Log.i(TAG, "mnButtonClicked");
+        SKAlarmSoundDialog.makeAppMusicDialog(this, currentAlarmSound, this).show();
     }
 
     @OnClick(R.id.none)
@@ -73,7 +73,7 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
 
     @OnClick(R.id.playStopButton)
     void playAndStopSound() {
-        if (playAndStopButton.toString().equals("Play")) {
+        if (playAndStopButton.getText().toString().equals("Play")) {
             playAndStopButton.setText("Stop");
         } else {
             playAndStopButton.setText("Play");
