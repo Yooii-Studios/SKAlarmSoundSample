@@ -22,6 +22,7 @@ public class MNAlarmAppMusicManager {
         return rawInt;
     }
 
+    /*
     public static String getTitleFromRawInt(Context context, int rawInt) {
         String soundName = "";
         if (rawInt == R.raw.alarm_dream) {
@@ -29,4 +30,5 @@ public class MNAlarmAppMusicManager {
         }
         return soundName;
     }
+    */
 }

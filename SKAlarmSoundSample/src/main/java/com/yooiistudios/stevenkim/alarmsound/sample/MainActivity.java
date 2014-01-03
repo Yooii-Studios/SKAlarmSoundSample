@@ -1,6 +1,7 @@
 package com.yooiistudios.stevenkim.alarmsound.sample;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -40,7 +41,10 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
 
     @OnClick(R.id.mp3Button)
     void mp3ButtonClicked() {
-        Log.i(TAG, "mp3ButtonClicked");
+        AlertDialog musicDialog = SKAlarmSoundDialog.makeMusicDialog(this, currentAlarmSound, this);
+        if (musicDialog != null) {
+            musicDialog.show();
+        }
     }
 
     @OnClick(R.id.ringtonButton)
@@ -101,6 +105,11 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
 
     @Override
     public void onAlarmSoundSelectCanceled() {
-        Toast.makeText(this, "Alarm selecte canceled", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Alarm selection canceled", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAlarmSoundSelectFailedDueToUsbConnection() {
+        Toast.makeText(this, "Can't access the file system because of USB Connection", Toast.LENGTH_SHORT).show();
     }
 }
