@@ -53,9 +53,9 @@ public class SKAlarmSoundPlayer {
     }
 
     public static void playAppMusic(final int rawInt, final Context context) throws IOException {
-        getMediaPlayer().reset();
         AssetFileDescriptor afd = context.getResources().openRawResourceFd(rawInt);
         if (afd != null) {
+            getMediaPlayer().reset();
             getMediaPlayer().setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
             getMediaPlayer().prepare();
@@ -69,14 +69,9 @@ public class SKAlarmSoundPlayer {
                 case APP_MUSIC:
                     int appSoundRawInt = Integer.valueOf(alarmSound.getSoundPath());
                     if (appSoundRawInt != -1) {
-                        AssetFileDescriptor afd = context.getResources().openRawResourceFd(appSoundRawInt);
-                        if (afd != null) {
-                            getMediaPlayer().reset();
-                            getMediaPlayer().setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                            afd.close();
-                            getMediaPlayer().prepare();
-                            getMediaPlayer().start();
-                        }
+                        SKAlarmSoundPlayer.playAppMusic(appSoundRawInt, context);
+                    } else {
+                        Toast.makeText(context, "Invalid Alarm Sound", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case RINGTONE:
