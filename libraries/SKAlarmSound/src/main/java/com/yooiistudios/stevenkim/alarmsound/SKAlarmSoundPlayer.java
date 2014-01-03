@@ -53,6 +53,7 @@ public class SKAlarmSoundPlayer {
     }
 
     public static void playAppMusic(final int rawInt, final Context context) throws IOException {
+        getMediaPlayer().reset();
         AssetFileDescriptor afd = context.getResources().openRawResourceFd(rawInt);
         if (afd != null) {
             getMediaPlayer().setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
