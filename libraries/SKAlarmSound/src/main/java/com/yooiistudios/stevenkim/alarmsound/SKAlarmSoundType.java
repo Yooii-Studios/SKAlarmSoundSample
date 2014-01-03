@@ -18,4 +18,18 @@ public enum SKAlarmSoundType {
         this.index = index;
         this.typeName = typeName;
     }
+
+    public static SKAlarmSoundType fromInteger(int index) {
+        switch(index) {
+            case 0:
+                return MUTE;
+            case 1:
+                return RINGTONE;
+            case 2:
+                return MUSIC;
+            case 3:
+                return MORNING_KIT_MUSIC;
+        }
+        return null;
+    }
 }

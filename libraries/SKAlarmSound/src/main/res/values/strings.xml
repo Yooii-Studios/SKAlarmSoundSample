@@ -4,6 +4,7 @@
     <!-- General -->
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="default_string">Default</string>
 
     <!-- Alarm Preference -->
     <string name="alarm_pref_sound_type">Sound</string>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yooiistudios.stevenkim.alarmsound.OnAlarmSoundClickListener;
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSound;
@@ -32,6 +33,7 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
         ButterKnife.inject(this);
 
         currentAlarmSound = SKAlarmSoundManager.loadLatestAlarmSound(this);
+        refreshAlarmSoundTextViews();
     }
 
     @OnClick(R.id.mp3Button)
@@ -42,6 +44,7 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
     @OnClick(R.id.ringtonButton)
     void ringtonesButtonClicked() {
         Log.i(TAG, "ringtonesButtonClicked");
+        SKAlarmSoundDialog.makeRingtoneDialog(this, currentAlarmSound, this).show();
     }
 
     @OnClick(R.id.mnButton)
@@ -63,6 +66,8 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
     @OnClick(R.id.clearSoundButton)
     void clearSoundButtonClicked() {
         currentAlarmSound = null;
+        SKAlarmSoundManager.clearLatestAlarmSound(this);
+        refreshAlarmSoundTextViews();
     }
 
     @OnClick(R.id.playStopButton)
@@ -71,8 +76,13 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
     }
 
     void refreshAlarmSoundTextViews() {
-        soundTypeTextView.setText(currentAlarmSound.getAlarmSoundType().toString());
-        soundTitleTextView.setText(currentAlarmSound.getSoundTitle());
+        if (currentAlarmSound != null) {
+            soundTypeTextView.setText(currentAlarmSound.getAlarmSoundType().toString());
+            soundTitleTextView.setText(currentAlarmSound.getSoundTitle());
+        } else {
+            soundTypeTextView.setText("Sound Type");
+            soundTitleTextView.setText("Sound Title");
+        }
     }
 
     /**
@@ -82,5 +92,10 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
     public void onAlarmSoundSelected(SKAlarmSound alarmSound) {
         currentAlarmSound = alarmSound;
         refreshAlarmSoundTextViews();
+    }
+
+    @Override
+    public void onAlarmSoundSelectCanceled() {
+        Toast.makeText(this, "Alarm selecte canceled", Toast.LENGTH_SHORT).show();
     }
 }
