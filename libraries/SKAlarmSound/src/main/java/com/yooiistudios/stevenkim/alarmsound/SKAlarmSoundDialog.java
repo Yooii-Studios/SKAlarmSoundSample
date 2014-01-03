@@ -87,7 +87,6 @@ public class SKAlarmSoundDialog {
 
         RingtoneManager ringtoneManager = new RingtoneManager(context);
         final Cursor ringtones = ringtoneManager.getCursor();
-        final MediaPlayer mediaPlayer = new MediaPlayer();
 
         // default is not selected
         int selectedIndex = -1;
@@ -126,12 +125,16 @@ public class SKAlarmSoundDialog {
                 String path = ringtones.getString(RingtoneManager.URI_COLUMN_INDEX)
                         + "/"
                         + ringtones.getInt(RingtoneManager.ID_COLUMN_INDEX);
-                mediaPlayer.reset();
+
+                Uri uri = Uri.parse(path);
+
                 try{
-                    Uri uri = Uri.parse(path);
-                    mediaPlayer.setDataSource(context, uri);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
+                    SKAlarmSoundPlayer.play(uri, context);
+//                    mediaPlayer.reset();
+//
+//                    mediaPlayer.setDataSource(context, uri);
+//                    mediaPlayer.prepare();
+//                    mediaPlayer.start();
                 }catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -175,16 +178,18 @@ public class SKAlarmSoundDialog {
                 }
 
                 // stop ringtone
-                mediaPlayer.reset();
-                mediaPlayer.release();
+                SKAlarmSoundPlayer.stop();
+//                mediaPlayer.reset();
+//                mediaPlayer.release();
                 ringtones.close();
             }
         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // stop ringtone
-                mediaPlayer.reset();
-                mediaPlayer.release();
+                SKAlarmSoundPlayer.stop();
+//                mediaPlayer.reset();
+//                mediaPlayer.release();
                 ringtones.close();
                 alarmSoundClickListener.onAlarmSoundSelectCanceled();
             }
@@ -193,8 +198,9 @@ public class SKAlarmSoundDialog {
             public void onCancel(DialogInterface dialog) {
                 Log.i(TAG, "onCancel");
                 // stop ringtone
-                mediaPlayer.reset();
-                mediaPlayer.release();
+                SKAlarmSoundPlayer.stop();
+//                mediaPlayer.reset();
+//                mediaPlayer.release();
                 ringtones.close();
                 alarmSoundClickListener.onAlarmSoundSelectCanceled();
             }
