@@ -46,21 +46,17 @@ public class SKAlarmSoundDialog {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
-                        Log.i(TAG, "sound_none");
                         alarmSoundClickListener.onAlarmSoundSelected(SKAlarmSoundFactory.makeMuteAlarmSound(context));
                         break;
                     case 1:
-                        Log.i(TAG, "sound_ringtones");
                         AlertDialog ringtoneDialog = makeRingtoneDialog(context, alarmSound, alarmSoundClickListener);
                         ringtoneDialog.show();
                         break;
                     case 2:
-                        Log.i(TAG, "sound_music");
                         AlertDialog musicDialog = makeMusicDialog(context, alarmSound);
                         musicDialog.show();
                         break;
                     case 3:
-                        Log.i(TAG, "sound_app_music");
                         AlertDialog appMusicDialog = makeAppMusicDialog(context, alarmSound);
                         appMusicDialog.show();
                         break;
