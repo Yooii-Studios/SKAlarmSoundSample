@@ -43,7 +43,6 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
 
     @OnClick(R.id.ringtonButton)
     void ringtonesButtonClicked() {
-        Log.i(TAG, "ringtonesButtonClicked");
         SKAlarmSoundDialog.makeRingtoneDialog(this, currentAlarmSound, this).show();
     }
 
