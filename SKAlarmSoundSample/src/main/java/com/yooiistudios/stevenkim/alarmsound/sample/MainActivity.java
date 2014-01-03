@@ -51,20 +51,17 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
 
     @OnClick(R.id.none)
     void noneButtonClicked() {
-        Log.i(TAG, "noneButtonClicked");
         currentAlarmSound = SKAlarmSoundFactory.makeMuteAlarmSound(this);
         refreshAlarmSoundTextViews();
     }
 
     @OnClick(R.id.alarmSoundDialogButton)
     void soundDialogButtonClicked() {
-        Log.i(TAG, "soundDialogButtonClicked");
         SKAlarmSoundDialog.makeSoundAlertDialog(this, currentAlarmSound, this).show();
     }
 
     @OnClick(R.id.clearSoundButton)
     void clearSoundButtonClicked() {
-        Log.i(TAG, "clearSoundButtonClicked");
         currentAlarmSound = null;
     }
 
