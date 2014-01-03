@@ -13,6 +13,9 @@ import com.yooiistudios.stevenkim.alarmsound.SKAlarmSound;
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundDialog;
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundFactory;
 import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundManager;
+import com.yooiistudios.stevenkim.alarmsound.SKAlarmSoundPlayer;
+
+import java.io.IOException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -79,8 +82,14 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
     void playAndStopSound() {
         if (playAndStopButton.getText().toString().equals("Play")) {
             playAndStopButton.setText("Stop");
+            try {
+                SKAlarmSoundPlayer.playAlarmSound(currentAlarmSound, this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             playAndStopButton.setText("Play");
+            SKAlarmSoundPlayer.stop();
         }
     }
 
