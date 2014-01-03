@@ -34,47 +34,77 @@
         android:textSize="25sp"
         android:background="#aa6585"/>
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="MP3"
-        android:id="@+id/mp3Button"
+        android:id="@+id/alarmButtonlayout"
         android:layout_below="@+id/alarmSoundTitleTextView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ringtons"
-        android:id="@+id/ringtonButton"
-        android:layout_alignTop="@+id/mp3Button"
-        android:layout_toRightOf="@+id/mp3Button" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MP3"
+            android:id="@+id/mp3Button"
+            android:layout_weight="1"
+            android:layout_alignParentStart="true" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MNMusic"
-        android:id="@+id/mnButton"
-        android:layout_alignTop="@+id/ringtonButton"
-        android:layout_toRightOf="@+id/ringtonButton" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ringtones"
+            android:layout_weight="1"
+            android:id="@+id/ringtonButton" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="None"
-        android:id="@+id/none"
-        android:layout_alignTop="@+id/mnButton"
-        android:layout_toRightOf="@+id/mnButton" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MNMusic"
+            android:layout_weight="1"
+            android:id="@+id/mnButton" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="None"
+            android:layout_weight="1"
+            android:id="@+id/none" />
+
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Show AlarmSound Dialog"
         android:id="@+id/alarmSoundDialogButton"
-        android:layout_below="@+id/mp3Button"
+        android:layout_below="@+id/alarmButtonlayout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear current alarm sound"
+        android:id="@+id/clearSoundButton"
+        android:layout_below="@+id/alarmSoundDialogButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play"
+        android:id="@+id/playStopButton"
+        android:layout_below="@+id/clearSoundButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>
