@@ -99,7 +99,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play &amp; Stop"
+        android:text="Play"
         android:id="@+id/playStopButton"
         android:layout_below="@+id/clearSoundButton"
         android:layout_alignParentLeft="true"

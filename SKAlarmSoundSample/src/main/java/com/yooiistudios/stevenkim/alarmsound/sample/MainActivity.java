@@ -3,6 +3,7 @@ package com.yooiistudios.stevenkim.alarmsound.sample;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
 
     @InjectView(R.id.alarmSoundTypeTextView) TextView soundTypeTextView;
     @InjectView(R.id.alarmSoundTitleTextView) TextView soundTitleTextView;
+    @InjectView(R.id.playStopButton) Button playAndStopButton;
 
     SKAlarmSound currentAlarmSound;
 
@@ -71,7 +73,11 @@ public class MainActivity extends Activity implements OnAlarmSoundClickListener 
 
     @OnClick(R.id.playStopButton)
     void playAndStopSound() {
-        Log.i(TAG, "playAndStopSound");
+        if (playAndStopButton.toString().equals("Play")) {
+            playAndStopButton.setText("Stop");
+        } else {
+            playAndStopButton.setText("Play");
+        }
     }
 
     void refreshAlarmSoundTextViews() {
