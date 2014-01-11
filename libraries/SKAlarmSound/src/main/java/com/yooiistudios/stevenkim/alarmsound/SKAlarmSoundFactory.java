@@ -18,8 +18,8 @@ public class SKAlarmSoundFactory {
      */
     public static SKAlarmSound makeDefaultAlarmSound(Context context) {
         // get default sound stuff from the device(Context)
-        String soundTitle = "";
-        String soundPath = "";
+        String soundTitle = context.getString(R.string.default_string);
+        String soundPath = "content://settings/system/ringtone";
 
         // init defaultAlarmSound
         return SKAlarmSound.newInstance(SKAlarmSoundType.RINGTONE, soundTitle, soundPath);
@@ -31,6 +31,6 @@ public class SKAlarmSoundFactory {
      * @return mute alarm sound
      */
     public static SKAlarmSound makeMuteAlarmSound(Context context) {
-        return SKAlarmSound.newInstance(SKAlarmSoundType.MUTE, "", null);
+        return SKAlarmSound.newInstance(SKAlarmSoundType.MUTE, context.getString(R.string.alarm_sound_string_none), null);
     }
 }
